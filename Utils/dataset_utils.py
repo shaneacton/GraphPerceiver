@@ -8,6 +8,7 @@ import nlp
 from tqdm import tqdm
 
 from Data import DATA_FOLDER
+from config import use_special_ents, use_detected_ents
 from wikipoint import Wikipoint
 
 
@@ -33,11 +34,13 @@ def load_unprocessed_dataset(dataset_name, version_name, split):
 def get_wikipoints(tokenizer, split=nlp.Split.TRAIN) -> List[Wikipoint]:
     global has_loaded
 
-    file_name = "wikihop.data"
+    file_name = "wikihop_" + split._name
+    file_name += ("_det" if use_detected_ents else "") + ("_spec" if use_special_ents else "")
+    file_name += ".data"
     data_path = join(DATA_FOLDER, file_name)
 
     if exists(data_path):  # has been processed before
-        print("loading preprocessed wikihop", split)
+        print("loading preprocessed wikihop", file_name)
         filehandler = open(data_path, 'rb')
         processed_examples = pickle.load(filehandler)
         print("loaded", len(processed_examples), "graphs")
@@ -48,7 +51,7 @@ def get_wikipoints(tokenizer, split=nlp.Split.TRAIN) -> List[Wikipoint]:
     data = list(load_unprocessed_dataset("qangaroo", "wikihop", split))
     print("num examples:", len(data))
 
-    print("processing wikihop", split)
+    print("processing wikihop", file_name)
     print("tokenising text for bert")
     processed_examples = [Wikipoint(ex, tokeniser=tokenizer) for ex in tqdm(data)]
     print("creating graphs")

@@ -8,16 +8,14 @@ from config import dropout, device
 
 class Transformer(nn.Module):
 
-    def __init__(self, dims, heads, num_types, num_layers, intermediate_fac=2, use_type_embeddings=True, use_pos_embeddings=False):
+    def __init__(self, dims, heads, num_types, num_layers, intermediate_fac=2, use_pos_embeddings=False):
         super().__init__()
         self.num_heads = heads
-        self.use_type_embeddings = use_type_embeddings
         self.use_pos_embeddings = use_pos_embeddings
         self.num_types = num_types
         self.dims = dims
 
-        if use_type_embeddings:
-            self.type_embedder = nn.Embedding(num_types, self.dims)
+        self.type_embedder = nn.Embedding(num_types, self.dims)
 
         encoder_layer = TransformerEncoderLayer(self.dims, heads,
                                                 self.dims * intermediate_fac, dropout, 'relu')

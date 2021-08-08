@@ -5,7 +5,7 @@ from torch import nn
 
 # helpers
 import config
-from perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
+from Model.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
 
 
 # main class
@@ -60,7 +60,7 @@ class GraphPerceiver(nn.Module):
         self,
         full_text: Tensor,
         nodes: Tensor,
-        mask = None,
+        mask=None,
     ):
         """
         here nodes are taking the place of our latent space. Number of nodes, and hence the number of latents is variable

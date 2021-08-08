@@ -9,6 +9,6 @@ class StringEmbedder(nn.Module):
     def embed(self, string, **kwargs):
         pass
 
-    def forward(self, string, **kwargs):
-        emb = self.embed(string, **kwargs)
+    def forward(self, string):
+        emb = self.embed(string)
         return emb
