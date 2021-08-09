@@ -3,7 +3,7 @@ from torch import nn
 from torch.nn import TransformerEncoderLayer, LayerNorm, TransformerEncoder
 from torch.nn.utils.rnn import pad_sequence
 
-from config import dropout, device
+from Config.options import device, model_conf
 
 
 class Transformer(nn.Module):
@@ -18,7 +18,7 @@ class Transformer(nn.Module):
         self.type_embedder = nn.Embedding(num_types, self.dims)
 
         encoder_layer = TransformerEncoderLayer(self.dims, heads,
-                                                self.dims * intermediate_fac, dropout, 'relu')
+                                                self.dims * intermediate_fac, model_conf().dropout, 'relu')
         encoder_norm = LayerNorm(self.dims)
         self.encoder = TransformerEncoder(encoder_layer, num_layers, encoder_norm)
 

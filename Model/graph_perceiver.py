@@ -1,10 +1,10 @@
-from torch import nn, Tensor
+from torch import Tensor
 
 from einops import repeat
 from torch import nn
 
 # helpers
-import config
+from Config import options
 from Model.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
 
 
@@ -61,6 +61,7 @@ class GraphPerceiver(nn.Module):
         full_text: Tensor,
         nodes: Tensor,
         mask=None,
+        queries=None
     ):
         """
         here nodes are taking the place of our latent space. Number of nodes, and hence the number of latents is variable
@@ -72,7 +73,7 @@ class GraphPerceiver(nn.Module):
         :param mask:
         :return: the updated node states
         """
-        b, *_, device = *full_text.shape, config.device
+        b, *_, device = *full_text.shape, options.device
         x = repeat(nodes, 'n d -> b n d', b=b)
 
         # layers
@@ -86,5 +87,10 @@ class GraphPerceiver(nn.Module):
             x = cross_attn(x, context=full_text, mask=mask) + x
             x = cross_ff(x) + x
 
-        return x
+        if queries is not None:
+            return x
 
+        latents = self.decoder_cross_attn(queries, context=x)
+
+        # final linear out
+        return self.to_logits(latents)

@@ -1,4 +1,3 @@
-from math import pi, log
 from functools import wraps
 
 import torch
@@ -8,7 +7,7 @@ import torch.nn.functional as F
 from einops import rearrange, repeat
 
 # helpers
-import config
+from Config import options
 
 
 def exists(val):
@@ -158,7 +157,7 @@ class PerceiverIO(nn.Module):
         mask = None,
         queries = None
     ):
-        b, *_, device = *data.shape, config.device
+        b, *_, device = *data.shape, options.device
 
         x = repeat(self.latents, 'n d -> b n d', b = b)
 
@@ -210,7 +209,7 @@ class PerceiverLM(nn.Module):
         x,
         mask = None
     ):
-        n, device = x.shape[1], config.device
+        n, device = x.shape[1], options.device
         x = self.token_emb(x)
 
         pos_emb = self.pos_emb(torch.arange(n, device = device))

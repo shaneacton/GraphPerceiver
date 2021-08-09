@@ -16,7 +16,7 @@ from Utils.model_utils import num_params
 from wikipoint import Wikipoint
 
 
-class MHQA(nn.Module):
+class MHQA2(nn.Module):
 
     def __init__(self):
         super().__init__()

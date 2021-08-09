@@ -1,0 +1,11 @@
+
+{
+  "perceiver_layers": 5,
+  "self_per_cross_attn": 3,
+
+  "num_summariser_layers": 1,
+  "num_summariser_heads": 8,
+
+  "lr": 0.001,
+  "dropout": 0.1
+}

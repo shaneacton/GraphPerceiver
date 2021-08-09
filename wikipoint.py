@@ -1,10 +1,9 @@
-import re
 from typing import Tuple, List
 
-from transformers import TokenSpan, BatchEncoding, AutoTokenizer, PreTrainedTokenizerBase
+from transformers import TokenSpan, BatchEncoding, PreTrainedTokenizerBase
 
 from Utils.spacy_utils import get_entity_char_spans
-from config import use_detected_ents, use_special_ents
+from Config.options import use_detected_ents, use_special_ents
 
 
 class Wikipoint:

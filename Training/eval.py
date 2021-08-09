@@ -1,16 +1,14 @@
-import time
-
 import nlp
 import torch
 from numpy import mean
+from tqdm import tqdm
 from transformers import PreTrainedTokenizerBase
 
-import config
 from Model.bert_embedder import TooManyTokens
 from Model.mhqa_model import MHQA
 from Utils.dataset_utils import get_wikipoints
 from Utils.eval_utils import get_acc_and_f1
-from config import max_examples
+from Config.options import max_examples
 
 _test = None
 
@@ -32,7 +30,7 @@ def evaluate(model: MHQA):
     model.eval()
 
     with torch.no_grad():
-        for i, ex in enumerate(test_set):
+        for i, ex in tqdm(enumerate(test_set)):
             if i >= max_examples != -1:
                 break
 

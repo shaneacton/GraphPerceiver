@@ -8,7 +8,7 @@ import nlp
 from tqdm import tqdm
 
 from Data import DATA_FOLDER
-from config import use_special_ents, use_detected_ents
+from Config.options import use_special_ents, use_detected_ents
 from wikipoint import Wikipoint
 
 

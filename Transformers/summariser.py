@@ -1,14 +1,11 @@
-import time
 from typing import List, Union
 
-import torch
 from torch import Tensor
 from transformers import TokenSpan
 
+from Config.options import model_conf
 from Transformers.transformer import Transformer
 from constants import ENTITY, DOCUMENT, CANDIDATE
-
-from config import num_summariser_layers, num_summariser_heads
 
 NODE_TYPE_MAP = {ENTITY: 0, DOCUMENT: 1, CANDIDATE: 2}
 
@@ -23,8 +20,8 @@ class Summariser(Transformer):
 
     def __init__(self, dims, intermediate_fac=2):
         num_types = 3
-        super().__init__(dims, num_summariser_heads, num_types,
-                         num_summariser_layers, intermediate_fac=intermediate_fac)
+        super().__init__(dims, model_conf().num_summariser_heads, num_types,
+                         model_conf().num_summariser_layers, intermediate_fac=intermediate_fac)
 
     def get_type_tensor(self, type, length):
         return super().get_type_tensor(type, length, NODE_TYPE_MAP)
