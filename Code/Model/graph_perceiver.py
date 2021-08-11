@@ -5,7 +5,7 @@ from torch import nn
 
 # helpers
 from Config import options
-from Model.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
+from Code.Model.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
 
 
 # main class
@@ -53,7 +53,7 @@ class GraphPerceiver(nn.Module):
                 self_attns
             ]))
 
-        self.decoder_cross_attn = PreNorm(queries_dim, Attention(queries_dim, latent_dim, heads = cross_heads, dim_head = cross_dim_head), context_dim = latent_dim)
+        self.decoder_cross_attn = PreNorm(queries_dim, Attention(queries_dim, latent_dim, heads=cross_heads, dim_head=cross_dim_head), context_dim=latent_dim)
         self.to_logits = nn.Linear(queries_dim, logits_dim) if exists(logits_dim) else nn.Identity()
 
     def forward(
@@ -87,9 +87,8 @@ class GraphPerceiver(nn.Module):
             x = cross_attn(x, context=full_text, mask=mask) + x
             x = cross_ff(x) + x
 
-        if queries is not None:
+        if queries is None:
             return x
-
         latents = self.decoder_cross_attn(queries, context=x)
 
         # final linear out

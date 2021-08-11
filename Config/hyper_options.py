@@ -2,8 +2,8 @@ import joblib
 import optuna
 
 from Config.options import model_conf, device
-from Model.mhqa_model import MHQA
-from Training.train import train_and_eval
+from Code.Model import MHQA
+from Code.Training import train_and_eval
 
 study = optuna.create_study()
 

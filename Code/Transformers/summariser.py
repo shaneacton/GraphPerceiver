@@ -4,8 +4,8 @@ from torch import Tensor
 from transformers import TokenSpan
 
 from Config.options import model_conf
-from Transformers.transformer import Transformer
-from constants import ENTITY, DOCUMENT, CANDIDATE
+from Code.Transformers.transformer import Transformer
+from Code.constants import ENTITY, DOCUMENT, CANDIDATE
 
 NODE_TYPE_MAP = {ENTITY: 0, DOCUMENT: 1, CANDIDATE: 2}
 

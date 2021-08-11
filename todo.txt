@@ -1,4 +1,2 @@
 * add document/span pos embs
 * test no bert fine tuning
-* don't sum cand and query probs
-    * query perceiverIO for a (candidates, f) vector which can singularly be mapped to candidate probabilities

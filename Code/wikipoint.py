@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 from transformers import TokenSpan, BatchEncoding, PreTrainedTokenizerBase
 
-from Utils.spacy_utils import get_entity_char_spans
+from Code.Utils import get_entity_char_spans
 from Config.options import use_detected_ents, use_special_ents
 
 

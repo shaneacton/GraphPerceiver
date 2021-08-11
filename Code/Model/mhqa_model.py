@@ -5,18 +5,18 @@ from torch import nn, Tensor
 from torch.nn import CrossEntropyLoss
 from transformers import BatchEncoding
 
-from Model.bert_embedder import BertEmbedder
-from Model.graph_perceiver import GraphPerceiver
-from Model.scorer import Scorer
-from Model.span_embedder import SpanEmbedder
-from Transformers.summariser import Summariser
-from Config.options import device, model_conf
-from constants import CANDIDATE, ENTITY
-from Utils.model_utils import num_params
-from wikipoint import Wikipoint
+from Code.Model.bert_embedder import BertEmbedder
+from Code.Model.graph_perceiver import GraphPerceiver
+from Code.Model.scorer import Scorer
+from Code.Model.span_embedder import SpanEmbedder
+from Code.Transformers.summariser import Summariser
+from Config.options import device, model_conf, use_span_embeddings
+from Code.constants import CANDIDATE, ENTITY
+from Code.Utils.model_utils import num_params
+from Code.wikipoint import Wikipoint
 
 
-class MHQA2(nn.Module):
+class MHQA(nn.Module):
 
     def __init__(self):
         super().__init__()
@@ -43,7 +43,6 @@ class MHQA2(nn.Module):
         """
         support_embeddings, query_emb, cand_embeddings, support_encodings, query_enc, cand_encodings = self.get_bert_encodings(wikipoint)
         # print("query emb:", query_emb.size(), "supps:", [x.size() for x in support_embeddings], "cands:", [x.size() for x in cand_embeddings])
-
         candidate_summaries = [self.summariser(c, CANDIDATE) for c in cand_embeddings]  # ~ (c, f)
         try:
             ents = self.get_entity_summaries(wikipoint.ent_token_spans, support_embeddings)  # ~ (e, f)
@@ -57,10 +56,7 @@ class MHQA2(nn.Module):
         # print("num ents:", ents.size(0), "num cands:", len(candidate_summaries), "num query tokens:", query_emb.size(1))
         nodes = torch.cat([ents] + candidate_summaries + [query_emb.view(query_emb.size(1), -1)], dim=0)
 
-        # document_spans = [(i, list(range(s.size(1))), list(range(1, s.size(1)+1))) for i, s in enumerate(support_embeddings)]
-        # support_pos_embs = [self.span_embedder(*document_spans[i]).view(1, support_embeddings[i].size(1), -1) for i, s in enumerate(support_embeddings)]
-        # print("support embs:", [s.size() for s in support_pos_embs])
-        # support_embeddings = [s + support_pos_embs[i] for i, s in enumerate(support_embeddings)]
+
         full_embeddings = torch.cat([query_emb] + support_embeddings + cand_embeddings, dim=1)  # ~ (b, l, f)
         graph_encoding = self.perceiver(full_embeddings, nodes)  # ~ (e, f)
 
@@ -129,6 +125,13 @@ class MHQA2(nn.Module):
         supports: List[Tensor] = [self.bert(sup) for sup in wikipoint.supports]
         support_embeddings = [s[0] for s in supports]
         support_encodings = [s[1] for s in supports]
+
+        if use_span_embeddings:
+            document_spans = [(i, list(range(s.size(1))), list(range(1, s.size(1) + 1))) for i, s in
+                              enumerate(support_embeddings)]
+            support_pos_embs = [self.span_embedder(*document_spans[i]).view(1, support_embeddings[i].size(1), -1) for i, s
+                                in enumerate(support_embeddings)]
+            support_embeddings = [s + support_pos_embs[i] for i, s in enumerate(support_embeddings)]
 
         query_emb, query_enc = self.bert(wikipoint.query)
         cands: List[Tensor] = [self.bert(cand) for cand in wikipoint.candidates]

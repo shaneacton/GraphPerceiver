@@ -1,8 +1,8 @@
 from transformers import AutoTokenizer, AutoModel, BigBirdModel, PreTrainedTokenizerBase
 
 from Config.options import bert_fine_tune_layers, device, bert_size, embedder_name
-from Utils.model_utils import num_params
-from string_embedder import StringEmbedder
+from Code.Utils.model_utils import num_params
+from Code.string_embedder import StringEmbedder
 
 
 class BertEmbedder(StringEmbedder):

@@ -3,11 +3,11 @@ from numpy import mean
 from tqdm import tqdm
 
 from Config.options import model_conf, max_examples, print_loss_every
-from Model.bert_embedder import TooManyTokens
-from Model.mhqa_model import MHQA
-from Training.eval import evaluate
-from Utils.dataset_utils import get_wikipoints
-from Utils.model_utils import num_params
+from Code.Model.bert_embedder import TooManyTokens
+from Code.Model.mhqa_model import MHQA
+from Code.Training.eval import evaluate
+from Code.Utils.dataset_utils import get_wikipoints
+from Code.Utils.model_utils import num_params
 
 
 def train_and_eval(mhqa: MHQA, optim=None):

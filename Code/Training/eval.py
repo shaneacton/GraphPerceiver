@@ -4,10 +4,10 @@ from numpy import mean
 from tqdm import tqdm
 from transformers import PreTrainedTokenizerBase
 
-from Model.bert_embedder import TooManyTokens
-from Model.mhqa_model import MHQA
-from Utils.dataset_utils import get_wikipoints
-from Utils.eval_utils import get_acc_and_f1
+from Code.Model.bert_embedder import TooManyTokens
+from Code.Model.mhqa_model import MHQA
+from Code.Utils.dataset_utils import get_wikipoints
+from Code.Utils.eval_utils import get_acc_and_f1
 from Config.options import max_examples
 
 _test = None

@@ -40,4 +40,4 @@ class SpanEmbedder(nn.Module):
 
         # print("d:", d_emb.size(), "s:", start_emb.size(), "e:", end_emb.size())
 
-        return torch.cat([d_emb, start_emb, end_emb], dim=1)  #  (num_spans,f)
+        return torch.tanh(torch.cat([d_emb, start_emb, end_emb], dim=1)) * 0.1 #  (num_spans,f)

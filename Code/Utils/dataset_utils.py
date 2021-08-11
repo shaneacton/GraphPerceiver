@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from Data import DATA_FOLDER
 from Config.options import use_special_ents, use_detected_ents
-from wikipoint import Wikipoint
+from Code.wikipoint import Wikipoint
 
 
 def load_unprocessed_dataset(dataset_name, version_name, split):
