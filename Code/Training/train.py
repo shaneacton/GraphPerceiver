@@ -1,8 +1,10 @@
+import random
+
 import torch
 from numpy import mean
 from tqdm import tqdm
 
-from Config.options import model_conf, max_examples, print_loss_every
+from Config.options import model_conf, max_examples, print_loss_every, num_epochs
 from Code.Model.bert_embedder import TooManyTokens
 from Code.Model.mhqa_model import MHQA
 from Code.Training.eval import evaluate
@@ -18,6 +20,15 @@ def train_and_eval(mhqa: MHQA, optim=None):
     wikipoints = get_wikipoints(mhqa.bert.tokenizer)
     print("created mhqa with", num_params(mhqa), "params")
 
+    for e in range(num_epochs):
+        random.Random(e).shuffle(wikipoints)
+        valid_acc = train_epoch(mhqa, optim, wikipoints)
+        print("epoch", e, "validation acc:", valid_acc)
+
+    return valid_acc
+
+
+def train_epoch(mhqa, optim, wikipoints):
     losses = []
     for i, w in tqdm(enumerate(wikipoints)):
         optim.zero_grad()
@@ -35,6 +46,5 @@ def train_and_eval(mhqa: MHQA, optim=None):
 
         if i % print_loss_every == 0 and i > 0:
             print("loss:", mean(losses[-print_loss_every:]))
-
     valid_acc = evaluate(mhqa)
     return valid_acc

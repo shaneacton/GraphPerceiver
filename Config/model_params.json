@@ -1,7 +1,7 @@
 
 {
-  "perceiver_layers": 5,
-  "self_per_cross_attn": 3,
+  "perceiver_layers": 7,
+  "self_per_cross_attn": 4,
 
   "num_summariser_layers": 1,
   "num_summariser_heads": 8,

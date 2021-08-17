@@ -1,4 +1,4 @@
-from transformers import AutoTokenizer, AutoModel, BigBirdModel, PreTrainedTokenizerBase
+from transformers import AutoTokenizer, AutoModel, PreTrainedTokenizerBase
 
 from Config.options import bert_fine_tune_layers, device, bert_size, embedder_name
 from Code.Utils.model_utils import num_params
@@ -21,8 +21,8 @@ class BertEmbedder(StringEmbedder):
         if "prajjwal1" in model_name:
             model_name += bert_size
             self.model = AutoModel.from_pretrained(model_name)
-        else:
-            self.model = BigBirdModel.from_pretrained(model_name, block_size=16, num_random_blocks=2)
+        # else:
+        #     self.model = BigBirdModel.from_pretrained(model_name, block_size=16, num_random_blocks=2)
 
         self.tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(model_name)
 
