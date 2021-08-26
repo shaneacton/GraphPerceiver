@@ -10,10 +10,6 @@ sys.path.append(join(dir_path_1, 'Config'))
 sys.path.append(join(dir_path_1, 'Checkpoint'))
 sys.path.append(join(dir_path_1, 'Data'))
 
-from Config.options import device
-from Code.Model.mhqa_model import MHQA
 from Code.Training.train import train_and_eval
 
-mhqa = MHQA().to(device)
-
-train_and_eval(mhqa)
+train_and_eval()

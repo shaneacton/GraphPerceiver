@@ -1,39 +1,40 @@
 import random
 
-import torch
 from numpy import mean
-from tqdm import tqdm
 
-from Config.options import model_conf, max_examples, print_loss_every, num_epochs
 from Code.Model.bert_embedder import TooManyTokens
-from Code.Model.mhqa_model import MHQA
 from Code.Training.eval import evaluate
 from Code.Utils.dataset_utils import get_wikipoints
-from Code.Utils.model_utils import num_params
+from Code.Utils.model_utils import num_params, save_checkpoint, get_model
+from Config.options import max_examples, print_loss_every, num_epochs
 
 
-def train_and_eval(mhqa: MHQA, optim=None):
+def train_and_eval(run_name="checkpoint"):
     """trains the model for 1 epoch"""
-    if optim is None:
-        optim = torch.optim.SGD([c for c in mhqa.parameters() if c.requires_grad], lr=model_conf().lr)
+    mhqa, optim, performance = get_model(run_name)
 
     wikipoints = get_wikipoints(mhqa.bert.tokenizer)
     print("created mhqa with", num_params(mhqa), "params")
 
     for e in range(num_epochs):
+        if mhqa.last_epoch > e:
+            continue
+        mhqa.last_epoch = e
         random.Random(e).shuffle(wikipoints)
-        valid_acc = train_epoch(mhqa, optim, wikipoints)
+        valid_acc = train_epoch(mhqa, optim, wikipoints, e, run_name)
         print("epoch", e, "validation acc:", valid_acc)
 
     return valid_acc
 
 
-def train_epoch(mhqa, optim, wikipoints):
+def train_epoch(mhqa, optim, wikipoints, epoch, run_name):
     losses = []
-    for i, w in tqdm(enumerate(wikipoints)):
+    for i, w in enumerate(wikipoints):
         optim.zero_grad()
         if i >= max_examples != -1:
             break
+        if mhqa.last_epoch == epoch and mhqa.last_i > i:
+            continue
 
         try:
             loss, pred_ans = mhqa(w)
@@ -44,7 +45,10 @@ def train_epoch(mhqa, optim, wikipoints):
             # print(e)
             pass
 
+        mhqa.last_i = i
         if i % print_loss_every == 0 and i > 0:
-            print("loss:", mean(losses[-print_loss_every:]))
+            print("e:", epoch, "i:", i, "loss:", mean(losses[-print_loss_every:]))
+            save_checkpoint(run_name, mhqa, optim, None)
+
     valid_acc = evaluate(mhqa)
     return valid_acc

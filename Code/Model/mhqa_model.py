@@ -33,6 +33,8 @@ class MHQA(nn.Module):
         self.entity_scorer = Scorer(self.dims)
 
         self.loss_fn = CrossEntropyLoss()
+        self.last_epoch = -1
+        self.last_i = -1
 
     def forward(self, wikipoint: Wikipoint):
 

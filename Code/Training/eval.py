@@ -30,7 +30,7 @@ def evaluate(model: MHQA):
     model.eval()
 
     with torch.no_grad():
-        for i, ex in tqdm(enumerate(test_set)):
+        for i, ex in enumerate(test_set):
             if i >= max_examples != -1:
                 break
 
