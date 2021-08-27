@@ -19,7 +19,6 @@ def train_and_eval(run_name="checkpoint"):
     for e in range(num_epochs):
         if mhqa.last_epoch > e:
             continue
-        mhqa.last_epoch = e
         random.Random(e).shuffle(wikipoints)
         valid_acc = train_epoch(mhqa, optim, wikipoints, e, run_name)
         print("epoch", e, "validation acc:", valid_acc)
@@ -29,6 +28,8 @@ def train_and_eval(run_name="checkpoint"):
 
 def train_epoch(mhqa, optim, wikipoints, epoch, run_name):
     losses = []
+    mhqa.last_epoch = epoch
+
     for i, w in enumerate(wikipoints):
         optim.zero_grad()
         if i >= max_examples != -1:
@@ -46,9 +47,12 @@ def train_epoch(mhqa, optim, wikipoints, epoch, run_name):
             pass
 
         mhqa.last_i = i
+
         if i % print_loss_every == 0 and i > 0:
             print("e:", epoch, "i:", i, "loss:", mean(losses[-print_loss_every:]))
             save_checkpoint(run_name, mhqa, optim, None)
+    mhqa.last_i = 0
+    mhqa.last_epoch = epoch + 1
 
     valid_acc = evaluate(mhqa)
     return valid_acc
