@@ -1,5 +1,6 @@
 import json
 from os.path import join
+from typing import Dict
 
 import torch
 from munch import Munch
@@ -22,18 +23,18 @@ use_span_embeddings = False  # 34 when on 37 off
 """TRAINING options"""
 num_epochs = 10
 weight_decay = 0.00001
-print_loss_every = 50
-max_examples = 60  # -1 for off
+print_loss_every = 500
+max_examples = -1  # -1 for off
 device = torch.device("cuda:0")
 
 _model_conf = Munch(json.load(open(join(CONFIG_FOLDER, "model_params.json"))))
-def model_conf():
+def model_conf() -> Dict:
     return _model_conf
 
-print("model conf:", model_conf())
 
-# 5 layers got 41
-
-def set_model_conf(new_conf:Munch):
+def set_model_conf(conf) -> Dict:
     global _model_conf
-    _model_conf = new_conf
+    _model_conf = conf
+
+
+print("model conf:", model_conf())

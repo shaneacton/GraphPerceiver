@@ -1,5 +1,7 @@
 
 {
+  "model_name": "graphPerceiver",
+
   "perceiver_layers": 7,
   "self_per_cross_attn": 4,
 
@@ -7,5 +9,8 @@
   "num_summariser_heads": 8,
 
   "lr": 0.001,
-  "dropout": 0.1
+  "dropout": 0.1,
+
+  "use_wandb": true,
+  "wandb_id": -1
 }

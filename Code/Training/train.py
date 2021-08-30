@@ -6,27 +6,36 @@ from Code.Model.bert_embedder import TooManyTokens
 from Code.Training.eval import evaluate
 from Code.Utils.dataset_utils import get_wikipoints
 from Code.Utils.model_utils import num_params, save_checkpoint, get_model
-from Config.options import max_examples, print_loss_every, num_epochs
+from Code.Utils.wandb_utils import wandb_run
+from Config.options import max_examples, print_loss_every, num_epochs, model_conf
 
+num_training_examples = -1
 
-def train_and_eval(run_name="checkpoint"):
+def train_and_eval():
     """trains the model for 1 epoch"""
-    mhqa, optim, performance = get_model(run_name)
+    mhqa, optim, performance = get_model(model_conf().model_name)
+    if model_conf().use_wandb:
+        try:
+            wandb_run().watch(mhqa)
+        except:
+            pass
 
     wikipoints = get_wikipoints(mhqa.bert.tokenizer)
-    print("created mhqa with", num_params(mhqa), "params")
+    print("training mhqa with", num_params(mhqa), "params")
+    global num_training_examples
+    num_training_examples = len(wikipoints)
 
     for e in range(num_epochs):
         if mhqa.last_epoch > e:
             continue
         random.Random(e).shuffle(wikipoints)
-        valid_acc = train_epoch(mhqa, optim, wikipoints, e, run_name)
-        print("epoch", e, "validation acc:", valid_acc)
+        valid_acc = train_epoch(mhqa, optim, wikipoints, e, model_conf().model_name, performance)
+        performance.log_valid_acc(valid_acc)
 
     return valid_acc
 
 
-def train_epoch(mhqa, optim, wikipoints, epoch, run_name):
+def train_epoch(mhqa, optim, wikipoints, epoch, run_name, performance):
     losses = []
     mhqa.last_epoch = epoch
 
@@ -49,7 +58,8 @@ def train_epoch(mhqa, optim, wikipoints, epoch, run_name):
         mhqa.last_i = i
 
         if i % print_loss_every == 0 and i > 0:
-            print("e:", epoch, "i:", i, "loss:", mean(losses[-print_loss_every:]))
+            e = epoch + i/num_training_examples
+            performance.log_loss(mean(losses[-print_loss_every:]), e)
             save_checkpoint(run_name, mhqa, optim, None)
     mhqa.last_i = 0
     mhqa.last_epoch = epoch + 1
