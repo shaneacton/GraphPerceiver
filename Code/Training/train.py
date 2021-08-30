@@ -43,7 +43,7 @@ def train_epoch(mhqa, optim, wikipoints, epoch, run_name, performance):
         optim.zero_grad()
         if i >= max_examples != -1:
             break
-        if mhqa.last_epoch == epoch and mhqa.last_i > i:
+        if mhqa.last_epoch == epoch and mhqa.last_i >= i:
             continue
 
         try:
@@ -60,7 +60,7 @@ def train_epoch(mhqa, optim, wikipoints, epoch, run_name, performance):
         if i % print_loss_every == 0 and i > 0:
             e = epoch + i/num_training_examples
             performance.log_loss(mean(losses[-print_loss_every:]), e)
-            save_checkpoint(run_name, mhqa, optim, None)
+            save_checkpoint(run_name, mhqa, optim, performance)
     mhqa.last_i = 0
     mhqa.last_epoch = epoch + 1
 

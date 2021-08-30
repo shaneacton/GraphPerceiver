@@ -23,8 +23,8 @@ use_span_embeddings = False  # 34 when on 37 off
 """TRAINING options"""
 num_epochs = 10
 weight_decay = 0.00001
-print_loss_every = 500
-max_examples = -1  # -1 for off
+print_loss_every = 50
+max_examples = 100  # -1 for off
 device = torch.device("cuda:0")
 
 _model_conf = Munch(json.load(open(join(CONFIG_FOLDER, "model_params.json"))))

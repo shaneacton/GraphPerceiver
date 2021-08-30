@@ -5,7 +5,8 @@ from munch import Munch
 
 from Code.Training.performance import Performance
 from Code.Utils import wandb_utils
-from Code.Utils.checkpoint_utils import get_folder_path, save_json_data, load_json_data
+from Code.Utils.checkpoint_utils import get_folder_path, save_json_data, load_json_data, save_binary_data, \
+    load_binary_data
 from Config.options import device, model_conf, set_model_conf
 
 
@@ -21,7 +22,8 @@ def get_model(run_name):
 def load_checkpoint(run_name):
     print("loading model checkpoint")
     model, optim = load_model(run_name)
-    return model, optim, Performance()
+    performance = load_binary_data(model_performance_path(run_name))
+    return model, optim, performance
 
 
 def get_new_model():
@@ -51,6 +53,7 @@ def load_model(run_name):
 def save_checkpoint(run_name, model, optim, performance):
     save_model(run_name, model, optim)
     save_json_data(model_conf(), model_conf_path(run_name))
+    save_binary_data(performance, model_performance_path(run_name))
 
 
 def num_params(model):
@@ -60,6 +63,11 @@ def num_params(model):
 def save_model(run_name, model, optimizer):
     model_save_data = {"model": model, "optimizer_state_dict": optimizer.state_dict()}
     torch.save(model_save_data, model_path(run_name))
+
+
+def model_performance_path(run_name):
+    path = join(get_folder_path(run_name), "performance.data")
+    return path
 
 
 def model_conf_path(run_name):
