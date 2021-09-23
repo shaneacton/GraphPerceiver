@@ -20,11 +20,14 @@ use_detected_ents = False
 use_special_ents = True
 use_span_embeddings = False  # 34 when on 37 off
 
+"""MODEL options"""
+use_custom_output_module = False
+
 """TRAINING options"""
 num_epochs = 10
 weight_decay = 0.00001
 print_loss_every = 50
-max_examples = 100  # -1 for off
+max_examples = -1  # -1 for off
 device = torch.device("cuda:0")
 
 _model_conf = Munch(json.load(open(join(CONFIG_FOLDER, "model_params.json"))))

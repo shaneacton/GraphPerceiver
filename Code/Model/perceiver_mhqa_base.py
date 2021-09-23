@@ -9,13 +9,13 @@ from Code.Model.graph_perceiver import GraphPerceiver
 from Code.Model.scorer import Scorer
 from Code.Model.span_embedder import SpanEmbedder
 from Code.Transformers.summariser import Summariser
-from Config.options import device, model_conf
-from Code.constants import CANDIDATE, ENTITY
 from Code.Utils.model_utils import num_params
+from Code.constants import ENTITY, CANDIDATE
 from Code.wikipoint import Wikipoint
+from Config.options import model_conf, device, use_span_embeddings
 
 
-class MHQA2(nn.Module):
+class PerceiverMHQA(nn.Module):
 
     def __init__(self):
         super().__init__()
@@ -32,6 +32,8 @@ class MHQA2(nn.Module):
         self.entity_scorer = Scorer(self.dims)
 
         self.loss_fn = CrossEntropyLoss()
+        self.last_epoch = -1
+        self.last_i = -1
 
     def forward(self, wikipoint: Wikipoint):
 
@@ -40,7 +42,15 @@ class MHQA2(nn.Module):
             then we summarise each entity node into a fixed size vector
             the node sequence is then fed into the graph perceiver for node correlation with lookups
         """
-        support_embeddings, query_emb, cand_embeddings, support_encodings, query_enc, cand_encodings = self.get_bert_encodings(wikipoint)
+        nodes, full_embeddings, candidate_summaries, support_encodings = self.get_all_embeddings(wikipoint)
+        candidate_summaries = torch.cat(candidate_summaries).view(1, len(wikipoint.candidates), -1)
+        logits = self.perceiver(full_embeddings, nodes, queries=candidate_summaries)  # ~ (e, f)
+
+        return self.finish(logits, wikipoint, support_encodings=support_encodings)
+
+    def get_all_embeddings(self, wikipoint: Wikipoint):
+        support_embeddings, query_emb, cand_embeddings, support_encodings, query_enc, cand_encodings = self.get_bert_encodings(
+            wikipoint)
         candidate_summaries = [self.summariser(c, CANDIDATE) for c in cand_embeddings]  # ~ (c, f)
         try:
             ents = self.get_entity_summaries(wikipoint.ent_token_spans, support_embeddings)  # ~ (e, f)
@@ -50,16 +60,11 @@ class MHQA2(nn.Module):
             raise e
         nodes = torch.cat([ents] + candidate_summaries + [query_emb.view(query_emb.size(1), -1)], dim=0)
         full_embeddings = torch.cat([query_emb] + support_embeddings + cand_embeddings, dim=1)  # ~ (b, l, f)
+        return nodes, full_embeddings, candidate_summaries, support_encodings
 
-        candidate_summaries = torch.cat(candidate_summaries).view(1, len(wikipoint.candidates), -1)
-        logits = self.perceiver(full_embeddings, nodes, queries=candidate_summaries)  # ~ (e, f)
-
-        return self.finish(logits, wikipoint, support_encodings=support_encodings)
-
-    def finish(self, logits: Tensor, example: Wikipoint, **kwargs):
+    def finish(self, latents: Tensor, example: Wikipoint, **kwargs):
         """performs prediction using the candidate and enity node encodings"""
-        final_probs = self.candidate_scorer(logits)
-
+        final_probs = self.pass_output_model(latents, example=example, **kwargs)
         pred_id = torch.argmax(final_probs)
         pred_ans = example.candidates[pred_id]
 
@@ -72,10 +77,21 @@ class MHQA2(nn.Module):
 
         return pred_ans
 
+    def pass_output_model(self, latents: Tensor, **kwargs):
+        final_probs = self.candidate_scorer(latents)
+        return final_probs
+
     def get_bert_encodings(self, wikipoint: Wikipoint):
         supports: List[Tensor] = [self.bert(sup) for sup in wikipoint.supports]
         support_embeddings = [s[0] for s in supports]
         support_encodings = [s[1] for s in supports]
+
+        if use_span_embeddings:
+            document_spans = [(i, list(range(s.size(1))), list(range(1, s.size(1) + 1))) for i, s in
+                              enumerate(support_embeddings)]
+            support_pos_embs = [self.span_embedder(*document_spans[i]).view(1, support_embeddings[i].size(1), -1) for i, s
+                                in enumerate(support_embeddings)]
+            support_embeddings = [s + support_pos_embs[i] for i, s in enumerate(support_embeddings)]
 
         query_emb, query_enc = self.bert(wikipoint.query)
         cands: List[Tensor] = [self.bert(cand) for cand in wikipoint.candidates]
@@ -95,7 +111,6 @@ class MHQA2(nn.Module):
         if len(flat_vecs) == 0:
             raise NoWordsException()
         return self.summariser(flat_vecs, ENTITY, flat_spans)
-
 
 class NoWordsException(Exception):
     pass

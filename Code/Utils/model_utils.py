@@ -7,7 +7,7 @@ from Code.Training.performance import Performance
 from Code.Utils import wandb_utils
 from Code.Utils.checkpoint_utils import get_folder_path, save_json_data, load_json_data, save_binary_data, \
     load_binary_data
-from Config.options import device, model_conf, set_model_conf
+from Config.options import device, model_conf, set_model_conf, use_custom_output_module
 
 
 def get_model(run_name):
@@ -27,8 +27,12 @@ def load_checkpoint(run_name):
 
 
 def get_new_model():
-    from Code.Model.mhqa_model import MHQA
-    mhqa = MHQA().to(device)
+    if use_custom_output_module:
+        from Code.Model.mhqa_model import MHQA
+        mhqa = MHQA().to(device)
+    else:
+        from Code.Model.perceiver_mhqa_base import PerceiverMHQA
+        mhqa = PerceiverMHQA().to(device)
     optim = torch.optim.SGD([c for c in mhqa.parameters() if c.requires_grad], lr=model_conf().lr)
     if model_conf().use_wandb:
         wandb_utils.new_run(model_conf().model_name)

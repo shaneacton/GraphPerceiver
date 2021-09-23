@@ -1,6 +1,7 @@
 import random
 
 from numpy import mean
+from tqdm import tqdm
 
 from Code.Model.bert_embedder import TooManyTokens
 from Code.Training.eval import evaluate
@@ -10,6 +11,7 @@ from Code.Utils.wandb_utils import wandb_run
 from Config.options import max_examples, print_loss_every, num_epochs, model_conf
 
 num_training_examples = -1
+
 
 def train_and_eval():
     """trains the model for 1 epoch"""
@@ -39,7 +41,7 @@ def train_epoch(mhqa, optim, wikipoints, epoch, run_name, performance):
     losses = []
     mhqa.last_epoch = epoch
 
-    for i, w in enumerate(wikipoints):
+    for i, w in tqdm(enumerate(wikipoints)):
         optim.zero_grad()
         if i >= max_examples != -1:
             break
