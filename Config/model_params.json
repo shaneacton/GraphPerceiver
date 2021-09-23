@@ -1,6 +1,6 @@
 
 {
-  "model_name": "graphPerceiver",
+  "model_name": "graphPerceiver2",
 
   "perceiver_layers": 7,
   "self_per_cross_attn": 4,

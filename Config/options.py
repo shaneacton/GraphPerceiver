@@ -24,9 +24,9 @@ use_span_embeddings = False  # 34 when on 37 off
 use_custom_output_module = False
 
 """TRAINING options"""
-num_epochs = 10
+num_epochs = 30
 weight_decay = 0.00001
-print_loss_every = 50
+print_loss_every = 500
 max_examples = -1  # -1 for off
 device = torch.device("cuda:0")
 
