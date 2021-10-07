@@ -3,6 +3,7 @@ from os.path import join, exists
 import torch
 from munch import Munch
 
+from Code.Model.mhqa.custom_output_graph_perceiver import CustomOutputMHQA
 from Code.Training.performance import Performance
 from Code.Utils import wandb_utils
 from Code.Utils.checkpoint_utils import get_folder_path, save_json_data, load_json_data, save_binary_data, \
@@ -32,8 +33,7 @@ def get_new_model():
         mhqa = PerceiverIOMHQA()
     else:
         if use_custom_output_module:
-            from Code.Model.mhqa.mhqa_model import MHQA
-            mhqa = MHQA()
+            mhqa = CustomOutputMHQA()
         else:
             from Code.Model.mhqa.graph_perceiver_mhqa import GraphPerceiverMHQA
             mhqa = GraphPerceiverMHQA()

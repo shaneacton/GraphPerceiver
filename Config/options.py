@@ -21,8 +21,8 @@ use_special_ents = True
 use_span_embeddings = False  # 34 when on 37 off
 
 """MODEL options"""
-use_learned_latents = True
-use_custom_output_module = False
+use_learned_latents = False
+use_custom_output_module = True
 
 """TRAINING options"""
 num_epochs = 30
