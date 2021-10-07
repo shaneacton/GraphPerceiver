@@ -5,7 +5,7 @@ from torch import nn
 
 # helpers
 from Config import options
-from Code.Model.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
+from Code.Model.perceiver.perceiver_io import exists, PreNorm, FeedForward, cache_fn, Attention
 
 
 # main class

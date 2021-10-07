@@ -16,6 +16,7 @@ num_training_examples = -1
 def train_and_eval():
     """trains the model for 1 epoch"""
     mhqa, optim, performance = get_model(model_conf().model_name)
+    print(mhqa)
     if model_conf().use_wandb:
         try:
             wandb_run().watch(mhqa)

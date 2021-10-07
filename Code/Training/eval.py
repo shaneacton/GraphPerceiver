@@ -1,11 +1,9 @@
 import nlp
 import torch
 from numpy import mean
-from tqdm import tqdm
 from transformers import PreTrainedTokenizerBase
 
 from Code.Model.bert_embedder import TooManyTokens
-from Code.Model.mhqa_model import MHQA
 from Code.Utils.dataset_utils import get_wikipoints
 from Code.Utils.eval_utils import get_acc_and_f1
 from Config.options import max_examples
@@ -21,7 +19,7 @@ def get_test(tokeniser: PreTrainedTokenizerBase):
     return _test
 
 
-def evaluate(model: MHQA):
+def evaluate(model):
     test_set = get_test(model.bert.tokenizer)
     answers = []
     predictions = []

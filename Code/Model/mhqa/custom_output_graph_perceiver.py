@@ -2,39 +2,19 @@ from typing import List
 
 import torch
 from torch import Tensor
-from torch.nn import CrossEntropyLoss
 from transformers import BatchEncoding
 
-from Code.Model.bert_embedder import BertEmbedder
-from Code.Model.graph_perceiver import GraphPerceiver
-from Code.Model.perceiver_mhqa_base import PerceiverMHQA
+from Code.Model.mhqa.graph_perceiver_mhqa import GraphPerceiverMHQA
 from Code.Model.scorer import Scorer
-from Code.Model.span_embedder import SpanEmbedder
-from Code.Transformers.summariser import Summariser
-from Code.Utils.model_utils import num_params
 from Code.wikipoint import Wikipoint
-from Config.options import device, model_conf
+from Config.options import device
 
 
-class MHQA(PerceiverMHQA):
+class CustomOutputMHQA(GraphPerceiverMHQA):
 
     def __init__(self):
         super().__init__()
-        self.bert = BertEmbedder()
-        self.dims = self.bert.dims
-        self.summariser = Summariser(self.dims)
-        self.span_embedder = SpanEmbedder(self.dims)
-        self.perceiver = GraphPerceiver(depth=model_conf().perceiver_layers, dim=self.dims, latent_dim=self.dims,
-                                        queries_dim=self.dims, self_per_cross_attn=model_conf().self_per_cross_attn)
-
-        print("params- summariser:", num_params(self.summariser), "perceiver:", num_params(self.perceiver))
-
-        self.candidate_scorer = Scorer(self.dims)
         self.entity_scorer = Scorer(self.dims)
-
-        self.loss_fn = CrossEntropyLoss()
-        self.last_epoch = -1
-        self.last_i = -1
 
     def forward(self, wikipoint: Wikipoint):
 
