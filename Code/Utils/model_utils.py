@@ -54,7 +54,7 @@ def load_model(run_name):
     wandb_id = conf["wandb_id"]
     wandb_utils.continue_run(wandb_id, model_conf().model_name)
 
-    optim = torch.optim.SGD([c for c in model.parameters() if c.requires_grad], lr=model_conf().lr)
+    optim = torch.optim.SGD([c for c in model.parameters()], lr=model_conf().lr)
     optim.load_state_dict(checkpoint["optimizer_state_dict"])
     return model, optim
 
