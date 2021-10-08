@@ -4,11 +4,12 @@ from numpy import mean
 from tqdm import tqdm
 
 from Code.Model.bert_embedder import TooManyTokens
+from Code.Model.mhqa.mhqa_model import MHQAModel
 from Code.Training.eval import evaluate
 from Code.Utils.dataset_utils import get_wikipoints
 from Code.Utils.model_utils import num_params, save_checkpoint, get_model
 from Code.Utils.wandb_utils import wandb_run
-from Config.options import max_examples, print_loss_every, num_epochs, model_conf
+from Config.options import max_examples, print_loss_every, num_epochs, model_conf, bert_freeze_epochs
 
 num_training_examples = -1
 
@@ -38,9 +39,13 @@ def train_and_eval():
     return valid_acc
 
 
-def train_epoch(mhqa, optim, wikipoints, epoch, run_name, performance):
+def train_epoch(mhqa: MHQAModel, optim, wikipoints, epoch, run_name, performance):
     losses = []
     mhqa.last_epoch = epoch
+    if epoch < bert_freeze_epochs:
+        mhqa.set_bert_trainable(False)
+    else:
+        mhqa.set_bert_trainable(True)
 
     for i, w in tqdm(enumerate(wikipoints)):
         optim.zero_grad()

@@ -7,7 +7,6 @@ from torch.nn import CrossEntropyLoss
 from Code.Model.bert_embedder import BertEmbedder
 from Code.Model.scorer import Scorer
 from Code.Transformers.summariser import Summariser
-from Code.Utils.model_utils import num_params
 from Code.constants import ENTITY, CANDIDATE
 from Code.wikipoint import Wikipoint
 from Config.options import device
@@ -78,6 +77,10 @@ class MHQAModel(nn.Module):
             return loss, pred_ans
 
         return pred_ans
+
+    def set_bert_trainable(self, is_trainable: bool):
+        for param in self.bert.parameters():
+            param.requires_grad = is_trainable
 
 
 class NoWordsException(Exception):

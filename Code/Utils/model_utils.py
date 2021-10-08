@@ -38,7 +38,7 @@ def get_new_model():
             from Code.Model.mhqa.graph_perceiver_mhqa import GraphPerceiverMHQA
             mhqa = GraphPerceiverMHQA()
     mhqa = mhqa.to(device)
-    optim = torch.optim.SGD([c for c in mhqa.parameters() if c.requires_grad], lr=model_conf().lr)
+    optim = torch.optim.SGD([c for c in mhqa.parameters()], lr=model_conf().lr)
     if model_conf().use_wandb:
         wandb_utils.new_run(model_conf().model_name)
     return mhqa, optim
