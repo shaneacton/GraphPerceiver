@@ -12,7 +12,7 @@ from Config import CONFIG_FOLDER
 embedder_name = "prajjwal1/bert-"  # "prajjwal1/bert-" for configurable sized bert
 
 bert_fine_tune_layers = ["embeddings", "pooler", "LayerNorm", ""]  # "" for all
-bert_size = "small"  # tiny | mini | small | medium
+bert_size = "mini"  # tiny | mini | small | medium
 
 
 """GRAPH ENCODING options"""
