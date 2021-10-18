@@ -25,14 +25,16 @@ use_learned_latents = False
 use_custom_output_module = True
 
 """TRAINING options"""
-num_epochs = 30
+num_epochs = 60
 weight_decay = 0.00001
 print_loss_every = 500
 max_examples = -1  # -1 for off
 device = torch.device("cuda:0")
 bert_freeze_epochs = 3  # how long to keep bert weights frozen
 
-_model_conf = Munch(json.load(open(join(CONFIG_FOLDER, "model_params.json"))))
+_model_conf = Munch({})
+
+
 def model_conf() -> Dict:
     return _model_conf
 
@@ -40,6 +42,13 @@ def model_conf() -> Dict:
 def set_model_conf(conf) -> Dict:
     global _model_conf
     _model_conf = conf
+
+
+def set_config_name(name):
+    global _model_conf
+    print("setting conf to:", name)
+    _model_conf = Munch(json.load(open(join(CONFIG_FOLDER, name + ".json"))))
+    print("conf:", _model_conf)
 
 
 print("model conf:", model_conf())

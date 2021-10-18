@@ -42,7 +42,7 @@ def train_and_eval():
 def train_epoch(mhqa: MHQAModel, optim, wikipoints, epoch, run_name, performance):
     losses = []
     mhqa.last_epoch = epoch
-    if epoch < bert_freeze_epochs:
+    if epoch < bert_freeze_epochs or not model_conf().train_bert:
         mhqa.set_bert_trainable(False)
     else:
         mhqa.set_bert_trainable(True)
