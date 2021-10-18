@@ -1,6 +1,6 @@
 
 {
-  "model_name": "graphPerceiverCustomFreezeBert",
+  "model_name": "graphPerceiverCustomFast",
 
   "perceiver_layers": 4,
   "self_per_cross_attn": 3,
