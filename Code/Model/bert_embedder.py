@@ -21,6 +21,9 @@ class BertEmbedder(StringEmbedder):
         if "prajjwal1" in model_name:
             model_name += bert_size
             self.model = AutoModel.from_pretrained(model_name)
+        else:
+            self.model = AutoModel.from_pretrained(model_name)
+
         # else:
         #     self.model = BigBirdModel.from_pretrained(model_name, block_size=16, num_random_blocks=2)
 

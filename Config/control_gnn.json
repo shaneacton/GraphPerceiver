@@ -1,0 +1,18 @@
+
+{
+  "model_name": "graphPerceiverCustom",
+
+  "perceiver_layers": 1,
+  "self_per_cross_attn": 28,
+
+  "num_summariser_layers": 1,
+  "num_summariser_heads": 8,
+
+  "lr": 0.001,
+  "dropout": 0.1,
+
+  "train_bert": false,
+
+  "use_wandb": true,
+  "wandb_id": -1
+}

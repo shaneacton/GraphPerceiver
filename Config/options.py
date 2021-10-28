@@ -9,7 +9,8 @@ from Config import CONFIG_FOLDER
 
 """EMBEDDING options"""
 # embedder_name = "google/bigbird-roberta-base"  # "prajjwal1/bert-" for configurable sized bert
-embedder_name = "prajjwal1/bert-"  # "prajjwal1/bert-" for configurable sized bert
+# embedder_name = "prajjwal1/bert-"  # "prajjwal1/bert-" for configurable sized bert
+embedder_name = "roberta-base"
 
 bert_fine_tune_layers = ["embeddings", "pooler", "LayerNorm", ""]  # "" for all
 bert_size = "mini"  # tiny | mini | small | medium
