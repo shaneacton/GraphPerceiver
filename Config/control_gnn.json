@@ -1,6 +1,6 @@
 
 {
-  "model_name": "graphPerceiverCustom",
+  "model_name": "graphPerceiverCustomLargeControl",
 
   "perceiver_layers": 1,
   "self_per_cross_attn": 28,
