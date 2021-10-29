@@ -61,7 +61,8 @@ class MHQAModel(nn.Module):
 
         if len(flat_vecs) == 0:
             raise NoWordsException()
-        return self.summariser(flat_vecs, ENTITY, flat_spans)
+        summ = self.summariser(flat_vecs, ENTITY, flat_spans)
+        return summ
 
     def finish(self, latents: Tensor, example: Wikipoint, **kwargs):
         """performs prediction using the candidate and enity node encodings"""

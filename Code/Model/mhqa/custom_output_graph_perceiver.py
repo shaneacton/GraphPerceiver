@@ -25,7 +25,6 @@ class CustomOutputMHQA(GraphPerceiverMHQA):
         """
         nodes, full_embeddings, candidate_summaries, support_encodings = self.get_all_embeddings(wikipoint)
         graph_encoding = self.perceiver(full_embeddings, nodes)  # ~ (e, f)
-
         return self.finish(graph_encoding, wikipoint, support_encodings=support_encodings)
 
     def pass_output_model(self, x: Tensor, example: Wikipoint, support_encodings: List[BatchEncoding]):
@@ -39,15 +38,15 @@ class CustomOutputMHQA(GraphPerceiverMHQA):
         for c, cand in enumerate(example.candidates):
             """find all entities which match this candidate, and score them each, returning the maximum score"""
             linked_ent_nodes = set()  # the ent ids this cand is linked to
-            for d, token_spans in enumerate(example.ent_token_spans):
+            for d, token_spans in enumerate(example.ent_token_spans):  # for each document
                 doc_tokens = support_encodings[d].tokens()
-                for e, ent_token_span in enumerate(token_spans):
+                for e, ent_token_span in enumerate(token_spans):  # each ent in that document
                     """
                         for each combination of candidate and entity, check for a text match
                     """
                     ent_tokens = doc_tokens[ent_token_span[0]:ent_token_span[1]]
                     ent = self.bert.tokenizer.convert_tokens_to_string(ent_tokens)
-                    if ent == cand:
+                    if ent.lower() == cand.lower():
                         flat_ent_id = example.get_flat_ent_id(d, e)
                         linked_ent_nodes.add(flat_ent_id)
 

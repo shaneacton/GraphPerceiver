@@ -1,4 +1,6 @@
-from transformers import AutoTokenizer, AutoModel, PreTrainedTokenizerBase
+import torch
+from transformers import AutoTokenizer, AutoModel, PreTrainedTokenizerBase, BigBirdModel, RobertaModel, \
+    RobertaTokenizer, RobertaTokenizerFast, BigBirdTokenizerFast
 
 from Config.options import bert_fine_tune_layers, device, bert_size, embedder_name
 from Code.Utils.model_utils import num_params
@@ -8,11 +10,15 @@ from Code.string_embedder import StringEmbedder
 class BertEmbedder(StringEmbedder):
 
     """
+    Model: prajjwal1/bert-
     sizes available:
                 tiny (L=2, H=128)
                 mini (L=4, H=256)
                 small (L=4, H=512)
                 medium (L=8, H=512)
+
+    Model: google/bigbird-roberta-base
+    Model: roberta-base
     """
 
     def __init__(self):
@@ -21,13 +27,15 @@ class BertEmbedder(StringEmbedder):
         if "prajjwal1" in model_name:
             model_name += bert_size
             self.model = AutoModel.from_pretrained(model_name)
-        else:
-            self.model = AutoModel.from_pretrained(model_name)
+            self.tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(model_name)
 
-        # else:
-        #     self.model = BigBirdModel.from_pretrained(model_name, block_size=16, num_random_blocks=2)
+        elif "bigbird" in model_name:
+            self.model = BigBirdModel.from_pretrained(model_name, block_size=16, num_random_blocks=2)
+            self.tokenizer: BigBirdTokenizerFast = BigBirdTokenizerFast.from_pretrained(model_name)
 
-        self.tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(model_name)
+        elif "roberta" in model_name:
+            self.model = RobertaModel.from_pretrained(model_name)
+            self.tokenizer: RobertaTokenizerFast = RobertaTokenizerFast.from_pretrained(model_name)
 
         print("bert config:",  self.model.config.__dict__)
         self.dims = self.model.config.hidden_size

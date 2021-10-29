@@ -8,7 +8,7 @@ import nlp
 from tqdm import tqdm
 
 from Data import DATA_FOLDER
-from Config.options import use_special_ents, use_detected_ents
+from Config.options import use_special_ents, use_detected_ents, embedder_name
 from Code.wikipoint import Wikipoint
 
 
@@ -36,6 +36,7 @@ def get_wikipoints(tokenizer, split=nlp.Split.TRAIN) -> List[Wikipoint]:
 
     file_name = "wikihop_" + split._name
     file_name += ("_det" if use_detected_ents else "") + ("_spec" if use_special_ents else "")
+    file_name += "_" + embedder_name
     file_name += ".data"
     data_path = join(DATA_FOLDER, file_name)
 

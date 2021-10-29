@@ -28,7 +28,7 @@ use_custom_output_module = True
 """TRAINING options"""
 num_epochs = 60
 weight_decay = 0.00001
-print_loss_every = 500
+print_loss_every = 500  # 500
 max_examples = -1  # -1 for off
 device = torch.device("cuda:0")
 bert_freeze_epochs = 3  # how long to keep bert weights frozen
