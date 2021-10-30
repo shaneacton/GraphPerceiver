@@ -2,7 +2,7 @@
 {
   "model_name": "graphPerceiverCustomLarge",
 
-  "perceiver_layers": 7,
+  "perceiver_layers": 9,
   "self_per_cross_attn": 4,
 
   "num_summariser_layers": 1,

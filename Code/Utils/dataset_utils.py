@@ -36,7 +36,7 @@ def get_wikipoints(tokenizer, split=nlp.Split.TRAIN) -> List[Wikipoint]:
 
     file_name = "wikihop_" + split._name
     file_name += ("_det" if use_detected_ents else "") + ("_spec" if use_special_ents else "")
-    file_name += "_" + embedder_name
+    file_name += "_" + embedder_name.replace("/", "-")
     file_name += ".data"
     data_path = join(DATA_FOLDER, file_name)
 
