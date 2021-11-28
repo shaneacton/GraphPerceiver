@@ -2,6 +2,7 @@ import torch
 from torch import Tensor
 
 from Code.Model.mhqa.mhqa_model import MHQAModel
+from Code.Model.perceiver.gated_graph_perceiver import GatedGraphPerceiver
 from Code.Model.perceiver.graph_perceiver import GraphPerceiver
 from Code.Utils.model_utils import num_params
 from Code.wikipoint import Wikipoint
@@ -12,7 +13,7 @@ class GraphPerceiverMHQA(MHQAModel):
 
     def __init__(self):
         super().__init__()
-        self.perceiver = GraphPerceiver(depth=model_conf().perceiver_layers, dim=self.dims, latent_dim=self.dims,
+        self.perceiver = GatedGraphPerceiver(depth=model_conf().perceiver_layers, dim=self.dims, latent_dim=self.dims,
                                         queries_dim=self.dims, self_per_cross_attn=model_conf().self_per_cross_attn)
 
         print("params- summariser:", num_params(self.summariser), "perceiver:", num_params(self.perceiver))

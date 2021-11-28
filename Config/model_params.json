@@ -1,6 +1,6 @@
 
 {
-  "model_name": "graphPerceiverCustomLarge",
+  "model_name": "gatedGraphPerceiverCustomLarge",
 
   "perceiver_layers": 9,
   "self_per_cross_attn": 4,

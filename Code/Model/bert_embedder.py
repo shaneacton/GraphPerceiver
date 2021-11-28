@@ -1,10 +1,9 @@
-import torch
 from transformers import AutoTokenizer, AutoModel, PreTrainedTokenizerBase, BigBirdModel, RobertaModel, \
-    RobertaTokenizer, RobertaTokenizerFast, BigBirdTokenizerFast
+    RobertaTokenizerFast, BigBirdTokenizerFast
 
-from Config.options import bert_fine_tune_layers, device, bert_size, embedder_name
 from Code.Utils.model_utils import num_params
 from Code.string_embedder import StringEmbedder
+from Config.options import bert_fine_tune_layers, device, bert_size, embedder_name
 
 
 class BertEmbedder(StringEmbedder):
